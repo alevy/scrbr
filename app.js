@@ -76,7 +76,7 @@ var app = new Vue({
     el: ".workspace",
     data: {
         currentPlayTime: new Timestamp(0),
-        zoom: 1,
+        zoom: 2,
         audioBuffer: null,
         currentUser: "",
         comments: [
