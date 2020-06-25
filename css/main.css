@@ -1,0 +1,185 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:wght@300;400&display=swap);
+/* COLORS */
+/* END COLORS */
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+div {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: bolder;
+  margin: 0;
+  background-color: #000;
+  color: #fff;
+  height: 100vh;
+}
+
+.workspace {
+  display: -ms-grid;
+  display: grid;
+  height: 100%;
+  width: 100%;
+  gap: 4px;
+  -ms-grid-columns: auto 347px;
+      grid-template-columns: auto 347px;
+  -ms-grid-rows: auto 40px;
+      grid-template-rows: auto 40px;
+      grid-template-areas: "waveform comments" "utility comments";
+}
+
+.workspace input[type="text"] {
+  position: absolute;
+}
+
+.workspace div.waveform {
+  position: relative;
+  overflow: hidden;
+}
+
+.workspace div.waveform canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 10;
+}
+
+.workspace div.utility, .workspace ul.comments {
+  background-color: #232323;
+}
+
+.workspace > div.utility {
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  grid-area: utility;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 10px 20px;
+}
+
+.workspace > div.utility > .timestamp {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+
+.workspace > div.utility > ul.controls {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-flex: 10;
+      -ms-flex-positive: 10;
+          flex-grow: 10;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.workspace > div.utility > ul.controls li {
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+.workspace > div.waveform {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: waveform;
+}
+
+.workspace > ul.comments {
+  -ms-grid-row: 1;
+  -ms-grid-row-span: 2;
+  -ms-grid-column: 2;
+  grid-area: comments;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  overflow-y: auto;
+}
+
+.workspace > ul.comments > li {
+  -webkit-box-shadow: inset 0px -1px 0px #000000;
+          box-shadow: inset 0px -1px 0px #000000;
+  background-color: inherit;
+  -webkit-transition: background-color 0.25s;
+  transition: background-color 0.25s;
+  padding: 24px;
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-rows: (1fr)[4] auto;
+      grid-template-rows: repeat(4, 1fr) auto;
+      grid-template-areas: "name" "date" "." "timestamp" "comment";
+  gap: 4px;
+}
+
+.workspace > ul.comments > li span, .workspace > ul.comments > li p {
+  display: block;
+}
+
+.workspace > ul.comments > li > .name {
+  -ms-grid-row: 1;
+  -ms-grid-column: 1;
+  grid-area: name;
+}
+
+.workspace > ul.comments > li > .posted {
+  color: #9E9E9E;
+  -ms-grid-row: 2;
+  -ms-grid-column: 1;
+  grid-area: date;
+}
+
+.workspace > ul.comments > li > .timestamp {
+  color: #9E9E9E;
+  -ms-grid-row: 4;
+  -ms-grid-column: 1;
+  grid-area: timestamp;
+}
+
+.workspace > ul.comments > li > .comment {
+  -ms-grid-row: 5;
+  -ms-grid-column: 1;
+  grid-area: comment;
+}
+
+.workspace > ul.comments > li.highlighted {
+  background-color: #3d3d3d;
+}
+/*# sourceMappingURL=main.css.map */

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scrbr Prototype</title>
+    <script src="https://kit.fontawesome.com/4206b71a81.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link href="/css/main.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="workspace">
+        <input type="text" v-model="currentUser" placeholder="Current User" style="z-index: 1000;"/>
+        <div class="waveform">
+            <audio v-on:timeupdate="updateCurrentTime"></audio>
+            <canvas id="waveform"></canvas>
+            <canvas id="cursor" v-on:mousedown="startScrub" v-on:dblclick="makeComment"></canvas>
+        </div>
+        <div class="utility">
+            <div class="timestamp">{{ currentPlayTime }}</div>
+            <ul class="controls">
+                <li><i v-on:click="stop" class="fa fa-stop"></i></li>
+                <li><i v-on:click="play" class="fa fa-play"></i></li>
+                <li><i v-on:click="pause" class="fa fa-pause"></i></li>
+                <li><i v-on:click="rewind" class="fa fa-backward"></i></li>
+                <li><i v-on:click="fastforward" class="fa fa-forward"></i></li>
+            </ul>
+        </div>
+        <ul class="comments">
+            <li v-for="(comment, i) in orderedComments" :key="i" :class="{ highlighted: comment.highlighted }">
+                <span class="name">{{ comment.user }}</span>
+                <span class="posted">{{ new Date(comment.posted).toLocaleDateString(undefined, { dateStyle: "medium"}) }}</span>
+                <span class="timestamp">{{ comment.timestamp }}</span>
+                <p class="comment">
+                    {{ comment.comment }}
+                </p>
+            </li>
+        </ul>
+    </div>
+    <script src="app.js" language="javascript"></script>
+</body>
+</html>

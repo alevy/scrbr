@@ -1,0 +1,148 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:wght@300;400&display=swap);
+
+/* COLORS */
+$background: #000;
+$card-background: #232323;
+$text-color: #fff;
+$secondary-text-color: #9E9E9E;
+/* END COLORS */
+
+@mixin secondary {
+    color: $secondary-text-color;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+h1,
+h2,
+h3,
+h4,
+p,
+div {
+  padding: 0;
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+body {
+  font-family: "Roboto", sans-serif;
+  font-size: 14px;
+  line-height: 16px;
+  font-weight: bolder;
+  margin: 0;
+  background-color: $background;
+  color: $text-color;
+  height: 100vh;
+}
+
+.workspace {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    gap: 4px;
+    grid-template-columns: auto 347px;
+    grid-template-rows: auto 40px;
+    grid-template-areas: "waveform comments"
+                         "utility comments";
+
+    input[type="text"] {
+        position: absolute;
+    }
+
+    div.waveform {
+        position: relative;
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            z-index: 10;
+        }
+        overflow: hidden;
+    }
+
+    div.utility, ul.comments {
+        background-color: $card-background;
+    }
+
+    > div.utility {
+        grid-area: utility;
+        display: flex;
+        align-items: center;
+        padding: 10px 20px;
+        > .timestamp {
+            width: fit-content;
+        }
+        > ul.controls {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-grow: 10;
+            justify-content: center;
+            li {
+                cursor: pointer;
+                margin: 0 5px;
+            }
+        }
+    }
+
+    > div.waveform {
+        grid-area: waveform;
+    }
+
+    > ul.comments {
+        grid-area: comments;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        overflow-y: auto;
+        > li {
+            box-shadow: inset 0px -1px 0px #000000;
+            background-color: inherit;
+            transition: background-color 0.25s;
+            padding: 24px;
+            display: grid;
+            grid-template-rows: repeat(4, 1fr) auto;
+            grid-template-areas: "name"
+                            "date"
+                            "."
+                            "timestamp"
+                            "comment";
+            gap: 4px;
+            span, p {
+                display: block;
+            }
+            > .name {
+                grid-area: name;
+            }
+            > .posted {
+                @include secondary();
+                grid-area: date;
+            }
+            > .timestamp {
+                @include secondary();
+                grid-area: timestamp;
+            }
+            > .comment {
+                grid-area: comment;
+            }
+            &.highlighted {
+                background-color: lighten($card-background, 10%);
+            }
+        }
+    }
+}
