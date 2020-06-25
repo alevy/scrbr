@@ -187,6 +187,11 @@ var app = new Vue({
                 posted: Date.now(),
                 timestamp: new Timestamp(this.currentPlayTime.milliseconds),
             });
+        },
+        scrollAndPauseTo(ts) {
+            const audio = this.$el.querySelector("audio")
+            audio.pause();
+            audio.currentTime = ts.milliseconds / 1000;
         }
     },
     computed: {

@@ -116,6 +116,7 @@ body {
             transition: background-color 0.25s;
             padding: 24px;
             display: grid;
+            cursor: pointer;
             grid-template-rows: repeat(4, 1fr) auto;
             grid-template-areas: "name"
                             "date"

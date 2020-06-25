@@ -143,6 +143,7 @@ body {
   padding: 24px;
   display: -ms-grid;
   display: grid;
+  cursor: pointer;
   -ms-grid-rows: (1fr)[4] auto;
       grid-template-rows: repeat(4, 1fr) auto;
       grid-template-areas: "name" "date" "." "timestamp" "comment";

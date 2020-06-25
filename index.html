@@ -27,7 +27,7 @@
             </ul>
         </div>
         <ul class="comments">
-            <li v-for="(comment, i) in orderedComments" :key="i" :class="{ highlighted: comment.highlighted }">
+            <li v-for="(comment, i) in orderedComments" :key="i" :class="{ highlighted: comment.highlighted }" v-on:click="scrollAndPauseTo(comment.timestamp)">
                 <span class="name">{{ comment.user }}</span>
                 <span class="posted">{{ new Date(comment.posted).toLocaleDateString(undefined, { dateStyle: "medium"}) }}</span>
                 <span class="timestamp">{{ comment.timestamp }}</span>
