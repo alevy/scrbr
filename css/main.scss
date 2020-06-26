@@ -5,6 +5,7 @@ $background: #000;
 $card-background: #232323;
 $text-color: #fff;
 $secondary-text-color: #9E9E9E;
+$highlight-color: #18A0FB;
 /* END COLORS */
 
 @mixin secondary {
@@ -83,6 +84,7 @@ body {
         padding: 10px 20px;
         > .timestamp {
             width: fit-content;
+            color: $highlight-color;
         }
         > ul.controls {
             list-style: none;
@@ -93,7 +95,11 @@ body {
             justify-content: center;
             li {
                 cursor: pointer;
-                margin: 0 5px;
+                margin: 0 25px;
+                &.disabled {
+                    cursor: default;
+                    color: darken($secondary-text-color, 20);
+                }
             }
         }
     }

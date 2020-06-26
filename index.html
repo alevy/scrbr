@@ -19,11 +19,27 @@
         <div class="utility">
             <div class="timestamp">{{ currentPlayTime }}</div>
             <ul class="controls">
-                <li><i v-on:click="stop" class="fa fa-stop"></i></li>
-                <li><i v-on:click="play" class="fa fa-play"></i></li>
-                <li><i v-on:click="pause" class="fa fa-pause"></i></li>
-                <li><i v-on:click="rewind" class="fa fa-backward"></i></li>
-                <li><i v-on:click="fastforward" class="fa fa-forward"></i></li>
+                <li :class="{disabled: this.state === 'stopped'}">
+                    <i v-on:click="stop" class="fa fa-stop"></i>
+                </li>
+                <li :class="{disabled: this.state === 'playing'}">
+                    <i v-on:click="play" class="fa fa-play"></i>
+                </li>
+                <li :class="{disabled: this.state !== 'playing'}">
+                    <i v-on:click="pause" class="fa fa-pause"></i>
+                </li>
+                <li>
+                    <i v-on:click="skipStart" class="fa fa-fast-backward"></i>
+                </li>
+                <li>
+                    <i v-on:click="rewind" class="fa fa-backward"></i>
+                </li>
+                <li>
+                    <i v-on:click="fastforward" class="fa fa-forward"></i>
+                </li>
+                <li>
+                    <i v-on:click="skipEnd" class="fa fa-fast-forward"></i>
+                </li>
             </ul>
         </div>
         <ul class="comments">

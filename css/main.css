@@ -88,6 +88,7 @@ body {
   width: -webkit-fit-content;
   width: -moz-fit-content;
   width: fit-content;
+  color: #18A0FB;
 }
 
 .workspace > div.utility > ul.controls {
@@ -107,7 +108,12 @@ body {
 
 .workspace > div.utility > ul.controls li {
   cursor: pointer;
-  margin: 0 5px;
+  margin: 0 25px;
+}
+
+.workspace > div.utility > ul.controls li.disabled {
+  cursor: default;
+  color: #6b6b6b;
 }
 
 .workspace > div.waveform {

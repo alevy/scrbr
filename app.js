@@ -10,7 +10,7 @@ function visualize(clipBuffer, canvas) {
     const view = clipBuffer.buffer;
     const nativeZoom = clipBuffer.zoom;
     const points = clipBuffer.length;
-    canvas.width = points;
+    canvas.width = points + 100;
     canvas.offsetWidth = points * dpr;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#43da97';
@@ -34,7 +34,7 @@ function drawCursor(clipBuffer, canvas, cursorTime) {
     const points = clipBuffer.length;
     const cursorPoint = cursorTime * nativeZoom;
 
-    canvas.width = points;
+    canvas.width = points + 100;
     canvas.offsetWidth = points * dpr;
 
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.height);
@@ -67,6 +67,7 @@ var app = new Vue({
         currentPlayTime: new Timestamp(0),
         audioBuffer: null,
         currentUser: "",
+        state: "stopped",
         comments: [
             {
                 user: "Shannen Blaie",
@@ -85,6 +86,16 @@ var app = new Vue({
     async mounted() {
         const audio = this.$el.querySelector("audio");
         audio.src = mp3Url;
+        audio.addEventListener('pause', () => {
+            if (audio.currentTime === 0) {
+                this.state = "stopped";
+            } else {
+                this.state = "paused";
+            }
+        });
+        audio.addEventListener('play', () => {
+            this.state = "playing";
+        });
         let buffer = await fetch(pcmUrl)
                            .then(response => response.arrayBuffer());
         const view = new DataView(buffer);
@@ -134,8 +145,21 @@ var app = new Vue({
             const audio = this.$el.querySelector("audio")
             audio.currentTime += 30;
         },
+        skipEnd() {
+            const audio = this.$el.querySelector("audio")
+            audio.currentTime = audio.duration;
+        },
+        skipStart() {
+            const audio = this.$el.querySelector("audio")
+            audio.currentTime = 0;
+        },
         updateCurrentTime() {
             const currentTime = this.$el.querySelector("audio").currentTime
+            if (currentTime !== 0 && this.state === "stopped") {
+                this.state = "paused";
+            } else if (currentTime === 0 && this.state === "paused") {
+                this.state = "stopped";
+            }
             const movingForward = currentTime * 1000 > this.currentPlayTimeMillis;
             this.currentPlayTime.milliseconds = currentTime * 1000;
             const cursorPoint = currentTime * this.audioBuffer.zoom / dpr;
