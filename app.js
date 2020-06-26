@@ -1,6 +1,5 @@
 const mp3Url = "/test-ep.mp3";
 const pcmUrl = "/test-ep.pcm";
-const audioCtx = new (AudioContext || webkitAudioContext)();
 const dpr = window.devicePixelRatio || 1;
 
 function visualize(clipBuffer, canvas) {
