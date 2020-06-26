@@ -14,6 +14,7 @@
         <div class="waveform">
             <audio v-on:timeupdate="updateCurrentTime"></audio>
             <canvas id="waveform"></canvas>
+            <canvas id="commentMarkers"></canvas>
             <canvas id="cursor" v-on:mousedown="startScrub" v-on:dblclick="makeComment"></canvas>
         </div>
         <div class="utility">

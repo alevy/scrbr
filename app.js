@@ -42,6 +42,24 @@ function drawCursor(clipBuffer, canvas, cursorTime) {
     ctx.fillRect(cursorPoint, 0, 2, canvas.height);
 }
 
+function drawCommentMarkers(clipBuffer, canvas, comments) {
+    canvas.height = canvas.offsetHeight * dpr;
+
+    const ctx = canvas.getContext("2d");
+    const nativeZoom = clipBuffer.zoom;
+    const points = clipBuffer.length;
+
+    canvas.width = points + 100;
+    canvas.offsetWidth = points * dpr;
+
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.height);
+    ctx.fillStyle = '#f33535';
+    comments.forEach(comment => {
+        const cursorPoint = comment.timestamp.milliseconds / 1000 * nativeZoom;
+        ctx.fillRect(cursorPoint, 0, 2, canvas.height);
+    });
+}
+
 function millisToTimestring(ms) {
     const millis = Math.floor(ms % 1000);
     const secs = Math.floor(ms / 1000) % 60;
@@ -106,8 +124,16 @@ var app = new Vue({
             length: points,
             zoom: nativeZoom,
         }
+        const commentsCanvas = this.$el.querySelector("#commentMarkers");
+        drawCommentMarkers(this.audioBuffer, commentsCanvas, this.comments);
     },
     watch: {
+        comments(comments) {
+            if (this.audioBuffer) {
+                const commentsCanvas = this.$el.querySelector("#commentMarkers");
+                drawCommentMarkers(this.audioBuffer, commentsCanvas, comments);
+            }
+        },
         currentPlayTimeMillis(val) {
             if (this.audioBuffer) {
                 const cursor = this.$el.querySelector("#cursor");
