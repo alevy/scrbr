@@ -13,7 +13,7 @@ function visualize(clipBuffer, canvas) {
     canvas.width = points;
     canvas.offsetWidth = points * dpr;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#43da97';
     ctx.fillRect(0, canvas.height / 4 - 1, canvas.width, 2);
     ctx.fillRect(0, canvas.height * 3 / 4 - 1, canvas.width, 2);
     for (let i = 0; i < points; i++) {
@@ -38,8 +38,8 @@ function drawCursor(clipBuffer, canvas, cursorTime) {
     canvas.offsetWidth = points * dpr;
 
     ctx.clearRect(0, 0, canvas.offsetWidth, canvas.height);
-    ctx.fillStyle = '#ff0000';
-    ctx.fillRect(cursorPoint, 0, 1, canvas.height);
+    ctx.fillStyle = '#fff';
+    ctx.fillRect(cursorPoint, 0, 2, canvas.height);
 }
 
 function millisToTimestring(ms) {
