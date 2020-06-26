@@ -1,54 +1,44 @@
-const url = "/test-ep-short.mp4";
+const mp3Url = "/test-ep.mp3";
+const pcmUrl = "/test-ep.pcm";
 const audioCtx = new (AudioContext || webkitAudioContext)();
+const dpr = window.devicePixelRatio || 1;
 
-function visualize(clipBuffer, canvas, zoom) {
-    const dpr = window.devicePixelRatio || 1;
+function visualize(clipBuffer, canvas) {
     canvas.height = canvas.offsetHeight * dpr;
 
     const ctx = canvas.getContext("2d");
-    const chan1 = clipBuffer.getChannelData(0);
-    const chan2 = clipBuffer.getChannelData(0);
-    const sampleRate = clipBuffer.sampleRate;
-    
-    const blockSize = sampleRate / zoom;
-    const points = chan1.length / blockSize;
 
-    canvas.width = (points * 5 + 4) * dpr;
-    canvas.offsetWidth = (points * 5 + 4);
+    const view = clipBuffer.buffer;
+    const nativeZoom = clipBuffer.zoom;
+    const points = clipBuffer.length;
+    canvas.width = points;
+    canvas.offsetWidth = points * dpr;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.fillStyle = '#fff';
     ctx.fillRect(0, canvas.height / 4 - 1, canvas.width, 2);
     ctx.fillRect(0, canvas.height * 3 / 4 - 1, canvas.width, 2);
     for (let i = 0; i < points; i++) {
-        const idx = i * blockSize;
-        const data1 = chan1.slice(idx, idx + blockSize).map(Math.abs);
-        const avg1 = data1.reduce((a,b) => a + b, 0) / data1.length;
-        const sample1 = avg1 * (canvas.height / 4 - 10);
-        const data2 = chan2.slice(idx, idx + blockSize).map(Math.abs);
-        const avg2 = data2.reduce((a,b) => a + b, 0) / data2.length;
-        const sample2 = avg2 * (canvas.height / 4 - 10);
-
-        ctx.fillRect(i * 5, canvas.height / 4 - sample1, 4, sample1 * 2);
-        ctx.fillRect(i * 5, canvas.height * 3 / 4 - sample2, 4, sample2 * 2);
+        const idx = i * 8 + 8;
+        const sample1 = view.getFloat32(idx) * (canvas.height / 4 - 10);
+        const sample2 = view.getFloat32(idx + 4) * (canvas.height / 4 - 10);
+        ctx.fillRect(i, canvas.height / 4 - sample1, 1, sample1 * 2);
+        ctx.fillRect(i, canvas.height * 3 / 4 - sample2, 1, sample2 * 2);
     }
 }
 
-function drawCursor(clipBuffer, canvas, zoom, cursorTime) {
-    const dpr = window.devicePixelRatio || 1;
+function drawCursor(clipBuffer, canvas, cursorTime) {
     canvas.height = canvas.offsetHeight * dpr;
 
     const ctx = canvas.getContext("2d");
-    const chan1 = clipBuffer.getChannelData(0);
-    const sampleRate = clipBuffer.sampleRate;
-    
-    const blockSize = sampleRate / zoom;
-    const points = chan1.length / blockSize;
-    const cursorPoint = cursorTime * zoom * 5;
+    const view = clipBuffer.buffer;
+    const nativeZoom = clipBuffer.zoom;
+    const points = clipBuffer.length;
+    const cursorPoint = cursorTime * nativeZoom;
 
-    canvas.width = (points * 5 + 4) * dpr;
-    canvas.offsetWidth = (points * 5 + 4);
+    canvas.width = points;
+    canvas.offsetWidth = points * dpr;
 
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, canvas.offsetWidth, canvas.height);
     ctx.fillStyle = '#ff0000';
     ctx.fillRect(cursorPoint, 0, 1, canvas.height);
 }
@@ -76,7 +66,6 @@ var app = new Vue({
     el: ".workspace",
     data: {
         currentPlayTime: new Timestamp(0),
-        zoom: 2,
         audioBuffer: null,
         currentUser: "",
         comments: [
@@ -96,27 +85,30 @@ var app = new Vue({
     },
     async mounted() {
         const audio = this.$el.querySelector("audio");
-        audio.src = url;
-        this.audioBuffer = await fetch(url)
-                                .then(response => response.arrayBuffer())
-                                .then(ab => audioCtx.decodeAudioData(ab));
+        audio.src = mp3Url;
+        let buffer = await fetch(pcmUrl)
+                           .then(response => response.arrayBuffer());
+        const view = new DataView(buffer);
+        const points = view.getUint32(4);
+        const nativeZoom = view.getUint32(0); // 1 / nativeZoom = seconds/point
+        this.audioBuffer = {
+            buffer: view,
+            length: points,
+            zoom: nativeZoom,
+        }
     },
     watch: {
         currentPlayTimeMillis(val) {
             if (this.audioBuffer) {
                 const cursor = this.$el.querySelector("#cursor");
-                drawCursor(this.audioBuffer, cursor, this.zoom, val / 1000);
+                drawCursor(this.audioBuffer, cursor, val / 1000);
             }
-        },
-        zoom(val) {
-            const waveform = this.$el.querySelector("#waveform");
-            visualize(this.audioBuffer, waveform, val);
         },
         audioBuffer(buffer) {
             const waveform = this.$el.querySelector("#waveform");
-            visualize(buffer, waveform, this.zoom);
+            visualize(buffer, waveform);
             const cursor = this.$el.querySelector("#cursor");
-            drawCursor(buffer, cursor, this.zoom, this.currentPlayTimeMillis / 1000);
+            drawCursor(buffer, cursor, this.currentPlayTimeMillis / 1000);
         }
     },
     methods: {
@@ -147,15 +139,15 @@ var app = new Vue({
             const currentTime = this.$el.querySelector("audio").currentTime
             const movingForward = currentTime * 1000 > this.currentPlayTimeMillis;
             this.currentPlayTime.milliseconds = currentTime * 1000;
-            const cursorPoint = currentTime * this.zoom * 5;
+            const cursorPoint = currentTime * this.audioBuffer.zoom / dpr;
             const cursor = this.$el.querySelector("#cursor");
             const container = cursor.parentElement;
             const lateBreakPoint = container.offsetWidth + container.scrollLeft - 100;
             const earlyBreakPoint = container.scrollLeft + 100;
             if (cursorPoint > lateBreakPoint && movingForward) {
-                container.scrollTo({ left: lateBreakPoint - 50, behavior: 'smooth' });
+                container.scrollTo({ left: cursorPoint - 100, behavior: 'smooth' });
             } else if (cursorPoint < earlyBreakPoint && !movingForward) {
-                container.scrollTo({ left: earlyBreakPoint - container.offsetWidth, behavior: 'smooth' });
+                container.scrollTo({ left: cursorPoint + 100 - container.offsetWidth , behavior: 'smooth' });
             }
             this.comments.forEach((comment) => {
                 if (Math.abs(this.currentPlayTimeMillis - comment.timestamp.milliseconds) < 1000) {
@@ -168,9 +160,9 @@ var app = new Vue({
         startScrub(e) {
             if (this.audioBuffer) {
                 const audio = this.$el.querySelector("audio");
-                audio.currentTime = e.layerX / this.zoom / 5;
+                audio.currentTime = e.layerX * dpr / this.audioBuffer.zoom;
                 const moveHandler = (e) => {
-                    audio.currentTime = e.layerX / this.zoom / 5;
+                    audio.currentTime = e.layerX * dpr / this.audioBuffer.zoom;
                 }
                 const mouseupHandler = () => {
                     e.target.removeEventListener("mousemove", moveHandler);
