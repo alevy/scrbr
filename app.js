@@ -222,12 +222,15 @@ var app = new Vue({
             }
         },
         makeComment(e) {
-            this.comments.push({
-                comment: prompt("What's your comment?"),
-                user: this.currentUser,
-                posted: Date.now(),
-                timestamp: new Timestamp(this.currentPlayTime.milliseconds),
-            });
+            const comment = prompt("What's your comment");
+            if (comment) {
+                this.comments.push({
+                    comment: comment,
+                    user: this.currentUser,
+                    posted: Date.now(),
+                    timestamp: new Timestamp(this.currentPlayTime.milliseconds),
+                });
+            }
         },
         scrollAndPauseTo(ts) {
             const audio = this.$el.querySelector("audio")
